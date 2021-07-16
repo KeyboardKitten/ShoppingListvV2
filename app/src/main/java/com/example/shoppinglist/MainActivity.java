@@ -12,7 +12,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -73,6 +79,41 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        loadContent();
+    }
+
+    public void loadContent(){
+        File path = getApplicationContext().getFilesDir();
+        File readFrom = new File(path, "list.txt");
+        byte[] content = new byte[(int) readFrom.length()];
+
+        FileInputStream stream = null;
+        try {
+            stream = new FileInputStream(readFrom);
+            stream.read(content);
+            String s = new String(content);
+            s = s.substring(1,  s.length() - 1);
+            String split[] = s.split(", ");
+            items = new ArrayList<>(Arrays.asList(split));
+            adapter = new ListViewAdapter(this, items);
+            listView.setAdapter(adapter);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        File path = getApplicationContext().getFilesDir();
+        try {
+            FileOutputStream writer = new FileOutputStream(new File(path, "List.txt"));
+            writer.write(items.toString().getBytes());
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        super.onDestroy();
     }
 
     Toast toast;
