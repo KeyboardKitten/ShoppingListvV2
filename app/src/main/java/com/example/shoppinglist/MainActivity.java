@@ -16,9 +16,9 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    ListView listView;
-    ArrayList<String> items;
-    ArrayAdapter<String> adapter;
+    static ListView listView;
+    static ArrayList<String> items;
+    static ListViewAdapter adapter;
     EditText input;
     ImageView enter;
 
@@ -50,12 +50,13 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                makeToast("Long press " + items.get(position));
+                makeToast("Removed " + items.get(position));
+                removeItem(position);
                 return false;
             }
         });
 
-        adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, items);
+        adapter = new ListViewAdapter(getApplicationContext(), items);
 
         listView.setAdapter(adapter);
 
@@ -82,8 +83,13 @@ public class MainActivity extends AppCompatActivity {
         toast.show();
     }
 
-    public void addItem(String item){
+    public static void addItem(String item){
         items.add(item);
+        adapter.notifyDataSetChanged();
+    }
+
+    static void removeItem(int remove){
+        items.remove(remove);
         adapter.notifyDataSetChanged();
     }
 }
